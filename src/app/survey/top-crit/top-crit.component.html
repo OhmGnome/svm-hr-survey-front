@@ -1,0 +1,15 @@
+
+<div class="cards-container well">
+  <div class="heading">
+    Choose the top 15 most critical : {{selectedCount}} / 15
+  </div>
+  <div *ngFor="let cardStruct of cards; let i = index; trackBy: trackByFn">
+    <a (click)="selectCard(cardStruct)">
+      <div [ngClass]="{'card': true, 'bgGrey': !cards[i].usCard.isTop15, 'bgBlue': cards[i].usCard.isTop15}">
+        <div class="card-text">
+          <span>{{cardStruct.card.green}}</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>

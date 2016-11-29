@@ -1,0 +1,12 @@
+<label for="SelectSessions">All Sessions: </label>
+
+<div>
+	<select multiple class="select-30" name="SelectSessions" [(ngModel)]="selectedSessions"> 
+      <option *ngFor="let n of sessions" [value]="n"> {{n.location || ''}} {{(n.name || '')}}</option>
+					</select>  
+</div>
+<div>
+	<input type="button" (click)="editSession()" value="Edit" class="btn btn-warning" /> 
+	<!--<input type="button" (click)="deleteSession()" value="Delete" class="btn btn-danger" /> -->
+</div>
+<div class="red">{{messageCanOnlyEditOne}}</div>

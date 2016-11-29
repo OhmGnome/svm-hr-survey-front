@@ -1,0 +1,36 @@
+
+<div class="col-md-5">
+	<label for="SelectCards"> All Cards: </label>
+	
+		<div>
+		<select multiple class="select" name="SelectCards" id="SelectCards" [(ngModel)]="selectedCards"> 
+	     <option *ngFor="let n of (cards)" [value]="n">  {{n.id || '' }} {{n.letter || ''}} {{ ( isSelectGreen ? n.red : n.green ) || ''}} </option>
+		</select>  
+	</div>
+	<div>
+				<input type="button" (click)="editCard()" value="Edit" class="btn btn-warning" /> 
+		<!--<input type="button" (click)="deleteCard()" value="Delete" class="btn btn-danger" /> -->
+	</div>
+	<div class="red">{{messageCanOnlyEditOne}}</div>
+</div>
+<div class="col-md-1">
+	<div class="vertical-25">
+		<input type="button" (click)="saveCardsToSession()" value=">>>>" [disabled]="!session.id" class="btn btn-success"
+		/>
+		 
+		<input type="button" (click)="deleteCardsFromSession()" value="<<<<" [disabled]="!session.id" class="btn btn-danger"
+		/>
+	</div>
+</div>
+<div class="col-md-5">
+	<label for="selectSessionCards">{{session.location || ''}} {{ (session.name || '')}}  Session's Cards: </label>
+	
+	<div>
+		<select multiple class="select" name="selectSessionCards" id="selectSessionCards"  [(ngModel)]="selectedSessionCards">
+			<option *ngFor="let n of sessionCards" [value]="n"> {{n.id || ''}} {{n.letter || ''}} {{ ( isSelectGreen ? n.red : n.green ) || ''}}</option>
+					</select>  
+	</div>
+
+	<input type="button" (click)="isSelectGreen = !isSelectGreen" value="Swap Displayed Questions" class="btn btn-primary" /> 
+</div>
+

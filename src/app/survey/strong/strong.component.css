@@ -1,0 +1,42 @@
+
+
+.card-text {
+    font-style: normal;
+    font-size: 150%;
+    text-align: center;
+    line-height: 1;
+	color: black;
+}
+
+.card{
+    margin-top: 1%;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 2%;
+    text-align: center;
+    width: 90%;
+	height: 150px;
+    background-color: #e6e6e6;
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    border-color: rgba(121, 121, 121, 1);
+    border-radius: 20px;
+    box-shadow: 10px 10px 5px #888888;
+}
+
+.pair{
+	height: 100%;
+    vertical-align: middle;
+    border-radius: 20px;
+}
+
+.cards-container{
+	
+}
+
+span {
+  display: inline-block;
+  vertical-align: middle;
+}
+

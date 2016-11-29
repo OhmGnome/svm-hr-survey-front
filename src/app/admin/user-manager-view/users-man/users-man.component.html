@@ -1,0 +1,38 @@
+<div>
+	<label for="SelectUsers"> All Users: </label>
+	
+		<div>
+		<select multiple class="select-30" name="SelectUsers" id="SelectUsers" [(ngModel)]="selectedUsers"> 
+	     <option *ngFor="let n of (users)" [value]="n"> {{ ( isSwapProps ? n.icon : n.username  ) }} {{ ( isSwapProps ? '' : n.email ) }} </option>
+		 
+					</select>  
+	</div>
+	<div>
+		<input type="button" (click)="editUser()" value="Edit" class="btn btn-warning" /> 
+		<!--<input type="button" (click)="deleteUser()" value="Delete" class="btn btn-danger" /> -->
+		<input type="button" (click)="isSwapProps = !isSwapProps" value="Swap Display" class="btn btn-primary" /> 
+	</div>
+	<div class="red">{{messageCanOnlyEditOne}}</div>
+</div>
+<!--feature sessions can have explicit users wanted?-->
+<!--<div class="col-md-1">
+	<div class="vertical-25">
+		<input type="button" (click)="saveUsersToSession()" value=">>>>" [disabled]="!session.id" class="btn btn-success"
+		/>
+		 
+		<input type="button" (click)="deleteUsersFromSession()" value="<<<<" [disabled]="!session.id" class="btn btn-danger"
+		/>
+	</div>
+</div>
+<div class="col-md-5">
+	<label for="selectUserSessions">{{session.location || ''}} {{ (session.name || '')}}  Session's Users: </label>
+	
+	<div>
+		<select multiple class="select-30" name="selectUserSessions" id="selectUserSessions"  [(ngModel)]="selectedUserSessions">
+			<option *ngFor="let n of userSessions" [value]="n"> {{ ( isSwapProps ? n.icon : n.username  ) }} {{ ( isSwapProps ? '' : n.email ) }} </option>
+					</select>  
+	</div>
+
+	<input type="button" (click)="isSwapProps = !isSwapProps" value="Swap Display" class="btn btn-primary" /> 
+</div>-->
+

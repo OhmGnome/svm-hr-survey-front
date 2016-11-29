@@ -1,0 +1,8 @@
+<div class="col-md-6 col-xs-12">
+	<ul class="nav nav-pills">
+		<li ng-class="{active:isActive('/sessionManagerView')}"><a routerLink="/admin/sessionManagerView" routerLinkActive="active" (click)="currentRoute('/sessionManagerView')">Session Manager</a></li>
+		<li ng-class="{active:isActive('/userManagerView')}"><a routerLink="/admin/userManagerView" routerLinkActive="active" (click)="currentRoute('/userManagerView')">User Manager</a></li>
+		<li ng-class="{active:isActive('/cardManagerView')}"><a routerLink="/admin/cardManagerView" routerLinkActive="active" (click)="currentRoute('/cardManagerView')">Card Manager</a></li>
+	</ul>
+	<p>Managing Session: {{session.location || ''}} {{session.name || ''}} </p>
+</div>

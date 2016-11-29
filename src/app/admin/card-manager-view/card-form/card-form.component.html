@@ -1,0 +1,18 @@
+<form class="form-horizontal" role="form" name="userForm">
+	<div class="form-group">
+		<input class="form-control" name="greenForm" type="text" [(ngModel)]="card.green" maxlength="400" placeholder="green question"
+			required/>
+	</div>
+	<div class="form-group">
+		<input class="form-control" name="redForm" type="text" [(ngModel)]="card.red" maxlength="400" placeholder="red question"
+			required />
+	</div>
+	<div class="form-group">
+		<input class="form-control" name="locationForm" type="text" [(ngModel)]="card.letter" maxlength="1" placeholder="letter"
+			pattern="[a-zA-Z]+" required/>
+	</div>
+</form>
+<div>
+	<button class="btn btn-success" (click)="save()">save</button> 
+	<button class="btn btn-danger" (click)="clear()">clear</button>
+</div>

@@ -1,0 +1,23 @@
+
+<div class="card">
+	<div class="card-number">&nbsp;{{currentCard}}</div>
+	<div class="circle"></div>
+	<div class="card-text">
+		<div class="col-md-1 col-xs-1">
+			<span><a (click)="prevCard()"><img class="arrow-image" src="../../../assets/img/arrowLeft.png"></a></span>
+		</div>
+		<div class="col-md-10 col-xs-10">
+			{{cardStruct.card.green}}
+		</div>
+		<div class="col-md-1 col-xs-1">
+			<span><a (click)="nextCard()"><img class="arrow-image" src="../../../assets/img/arrowRight.png"></a></span>
+		</div>
+	</div>
+	<div class="card-buttons">
+		<input type="button" class="btn btn-primary card-button" (click)="moreCrit()" [disabled]="(cardStruct.isDirty && cardStruct.usCard.isMoreCritical)" value="More Critical"/>
+		<input type="button" class="btn btn-primary card-button" (click)="lessCrit()" [disabled]="(cardStruct.isDirty && !cardStruct.usCard.isMoreCritical)" value="Less Critical"/>
+	</div>
+	<div>
+	<!--<input type="button" class="btn btn-primary card-button" (click)="navForceProgress()" value="navForceProgress"/>-->
+	</div>
+</div>

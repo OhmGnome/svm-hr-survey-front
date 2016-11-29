@@ -1,0 +1,1 @@
+preserve top /15 selected count on page change

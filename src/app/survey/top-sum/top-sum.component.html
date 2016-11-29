@@ -1,0 +1,20 @@
+
+<div class="cards-container well">
+  <div class="heading">
+    Top 15 most critical items chosen by the group
+  </div>
+  <div *ngFor="let cardCount of cardCounts">
+    <div [ngClass]="{'card': true, 'bgGrey': !cardCount.isRed, 'bgBlue': cardCount.isRed}">
+      <div class="card-text">
+        <div>
+          &nbsp;
+        <!--<div class="pull-left">{{cardCount.card.id}}</div>-->
+          <!--<div class="pull-right">votes {{cardCount.isTop15}} </div>-->
+          <div>
+              {{cardCount.isTop15}} 
+         </div>
+        <span>{{cardCount.isRed ? cardCount.card.red : cardCount.card.green}}</span>
+      </div>
+    </div>
+  </div>
+</div>

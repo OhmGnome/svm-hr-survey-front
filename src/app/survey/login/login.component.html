@@ -1,0 +1,52 @@
+
+<div class="col-md-12 col-xs-12">
+	<div class="col-md-4 col-xs-12 vertical-20" >
+		<div>
+			<h4>{{loggedInMessage}}</h4>
+		</div>
+		<form class="form-horizontal" name="loginForm">
+			<div class="form-group">
+				<input class="form-control" type="text" [(ngModel)]="user.username" maxlength="45" placeholder="username" pattern="[a-zA-Z0-9]+"
+					name="usernameForm" />
+			</div>
+			<div class="form-group">
+				<input class="form-control" type="text" [(ngModel)]="user.email" maxlength="45" placeholder="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+					name="emailForm" />
+			</div>
+		</form>
+		<div>
+			<input type="button" class="btn btn-primary" (click)="login()" value="login" />
+			<input type="button" class="btn btn-primary" (click)="register()" value="register" />
+		</div>
+
+		<div [hidden]="!user.id">
+			<!--<div [ngIf]="!!user.id" >-->
+			<form class="form-horizontal padding-top-20" name="joinSessionAuthform">
+				<div class="form-group">
+					<input class="form-control" type="text" [(ngModel)]="auth.password" maxlength="45" placeholder="session password" pattern="[a-zA-Z0-9]"
+						name="passwordForm" />
+				</div>
+			</form>
+			<div>
+				<input type="button" (click)="join()" value="Join Session" class="btn btn-success" /> {{selectedSession.location}} {{selectedSession.name}}
+				<h5>{{joinMessage}}</h5>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-1 col-xs-12">
+		&nbsp;
+	</div>
+	<!--<div [hidden]="!user.id" class="col-md-7">-->
+	<!--<div class="col-md-4 col-xs-12">-->
+	<div class="col-md-4 col-xs-12" [hidden]="!user.id">
+		<h5>Active Sessions: </h5>
+		<div class="list-height">
+			<div *ngFor="let n of sessions">
+				<input type="button" class="btn btn-primary width-80" (click)="selectSession(n)" value="{{n.location || ''}} {{(n.name || '')}}"
+				/>
+			</div>
+		</div>
+
+	</div>
+</div>

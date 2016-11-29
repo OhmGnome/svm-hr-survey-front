@@ -1,0 +1,37 @@
+<div  class="form-horizontal" role="form" name="userForm">
+	<div class="form-group">
+		<input class="form-control" type="text" [(ngModel)]="session.location" maxlength="45" placeholder="location" pattern="[a-zA-Z0-9]+"
+			required name="sessionLocationForm" />
+	</div>
+	<div class="form-group">
+		<input class="form-control" type="text" [(ngModel)]="session.name" maxlength="45" placeholder="name" pattern="[a-zA-Z0-9]"
+			name="sessionNameForm" />
+	</div>
+	<!--manual session expiration date feature wanted?-->
+	<!--<div class="form-group">
+		<div class="input-group col-md-6">
+			<input class="form-control " name="dp" ngbdatepicker [(ngModel)]="session.startDate" placeholder="yyyy-mm-dd">
+			<div class="input-group-addon">
+				<img src="img/calendar-icon.svg" class="datepicker-img">
+			</div>
+		</div> 
+		<div class="input-group col-md-6">
+			<input class="form-control " name="dp" ngbdatepicker [(ngModel)]="session.endDate" placeholder="yyyy-mm-dd">
+			<div class="input-group-addon">
+				<img src="img/calendar-icon.svg" class="datepicker-img">
+			</div>
+		</div>
+	</div>-->
+	<div class="form-group">
+		<input class="form-control" type="text" [(ngModel)]="auth.password" maxlength="45" placeholder="optional password" pattern="[a-zA-Z0-9]"
+			name="passwordForm" />
+	</div>
+	<div>
+		<label><input type="checkbox" [checked]="startSessionwithCards" [(ngModel)]="startSessionwithCards" name="addDfltCardsForm" /> Create new session with cards</label>
+		<label><input type="checkbox" [checked]="session.isActive" [(ngModel)]="session.isActive" name="isActiveForm" /> Activate session</label>
+	</div>
+</div>
+<div>
+	<button class="btn btn-success" (click)="save()">save</button>  <button class="btn btn-success" (click)="saveAndManage()">save and manage</button>	
+	<button class="btn btn-danger" (click)="clear()">clear</button>
+</div>
