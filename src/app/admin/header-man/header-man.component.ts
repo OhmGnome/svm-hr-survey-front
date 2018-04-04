@@ -1,6 +1,7 @@
 import { Session } from '../../core/model/session'
 import { SessionService } from '../../core/service/session.service'
 import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-header-man',
@@ -10,7 +11,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 export class HeaderManComponent implements OnInit {
   sessionService: SessionService
   presentRoute: string
-  sessionSubscription
+  subscriptions: Subscription[] = new Array<Subscription>()
 
   session: Session = new Session
 
@@ -20,12 +21,12 @@ export class HeaderManComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sessionSubscription = this.sessionService.sessionObservable.subscribe(session => this.session = session)
+    this.subscriptions = [this.sessionService.sessionObservable.subscribe(session => this.session = session)]
     this.presentRoute = '/sessionManagerView'
   }
 
   ngOnDestroy() {
-    this.sessionSubscription.unsubscribe()
+    this.subscriptions.forEach(scribe => scribe.unsubscribe())
   }
 
   currentRoute(route: string) {

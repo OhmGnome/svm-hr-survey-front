@@ -7,6 +7,7 @@ import { CardService } from './../core/service/card.service'
 import { UserSessionCardService } from './../core/service/user-session-card.service'
 import { AuthService } from '../core/service/auth.service'
 import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-header',
@@ -14,6 +15,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  subscriptions: Subscription[] = new Array<Subscription>()
   service: UserSessionCardService
   router: Router
   cardService: CardService
@@ -21,7 +23,6 @@ export class HeaderComponent implements OnInit {
   presentRoute: string
   isLoggedIn: boolean
   progress: string
-  progressSubscriber
 
   constructor(router: Router, service: UserSessionCardService, cardService: CardService,
   private authService: AuthService) {
@@ -31,14 +32,15 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.subscriptions = [this.service.progressObs.subscribe(data => this.progress = data)]
+    
     LocalStore.getProgress(this.service, this.cardService)
-    this.progressSubscriber = this.service.progressObs.subscribe(data => this.progress = data)
     this.isLoggedIn = !!this.service.userSession
     this.presentRoute = '/login'
   }
 
   ngOnDestroy() {
-    this.progressSubscriber.unsubscribe()
+    this.subscriptions.forEach(scribe => scribe.unsubscribe())
   }
 
   currentRoute(route: string) {

@@ -7,6 +7,7 @@ import { Session } from './../../../core/model/session'
 import { User } from './../../../core/model/user'
 import { UserSession } from './../../../core/model/userSession'
 import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-users-man',
@@ -17,10 +18,9 @@ export class UsersManComponent implements OnInit {
   userService: UserService
   userSessionService: UserSessionService
   sessionService: SessionService
+  subscriptions: Subscription[] = new Array<Subscription>()
 
   session: Session = new Session
-  sessionSubscription: any
-  usersSubscription: any
   userSessionsJoin: UserSession[]
 
   messageCanOnlyEditOne: string = ''
@@ -36,8 +36,10 @@ export class UsersManComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.usersSubscription = this.userService.getCache().subscribe(users => this.users = users)
-    this.sessionSubscription = this.sessionService.sessionObservable.subscribe(session => this.session = session)
+    this.subscriptions = [
+      this.userService.getCache().subscribe(users => this.users = users),
+      this.sessionService.sessionObservable.subscribe(session => this.session = session)
+    ]
     if (this.session.id) this.userSessionService.findBySessionId(this.session.id).then(data => {
       this.userSessionsJoin = data
       data.forEach(userSession => { this.userSessions.push(this.users.find(user => user.id === userSession.userId)) })
@@ -45,8 +47,7 @@ export class UsersManComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.sessionSubscription.unsubscribe()
-    this.usersSubscription.unsubscribe()
+    this.subscriptions.forEach(scribe => scribe.unsubscribe())
   }
 
   editUser() {
@@ -57,10 +58,11 @@ export class UsersManComponent implements OnInit {
   }
 
   deleteUser() {
-    this.selectedUsers.forEach(user => {this.userService.delete(user.id)
+    this.selectedUsers.forEach(user => {
+      this.userService.delete(user.id)
       this.users.splice(this.users.indexOf(user, 0), 1)
       this.userSessions.splice(this.userSessions.indexOf(user, 0), 1)
-    this.userSessionsJoin.splice(this.userSessionsJoin.indexOf(this.userSessionsJoin.find(userSession => userSession.userId === user.id, 0), 1))
+      this.userSessionsJoin.splice(this.userSessionsJoin.indexOf(this.userSessionsJoin.find(userSession => userSession.userId === user.id, 0), 1))
     })
   }
 

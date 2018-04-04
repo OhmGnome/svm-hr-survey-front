@@ -2,6 +2,7 @@ import { UserService } from './../../../core/service/user.service'
 import { User } from './../../../core/model/user'
 import { Component, OnInit } from '@angular/core'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
+import { Subscription } from 'rxjs/Subscription';
 
 
 @Component({
@@ -12,8 +13,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms'
 export class UserFormComponent implements OnInit {
   userService: UserService
   users: User[]
-  usersSubscription: any
-  userSubscription: any
+  subscriptions: Subscription[] = new Array<Subscription>()
 
   user: User = new User
   form: FormGroup
@@ -23,13 +23,14 @@ export class UserFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userSubscription = this.userService.userObservable.subscribe(user => this.user = user)
-    this.usersSubscription = this.userService.getCache().subscribe(users => this.users = users)
+    this.subscriptions = [
+      this.userService.userObservable.subscribe(user => this.user = user),
+      this.userService.getCache().subscribe(users => this.users = users)
+    ]
   }
 
   ngOnDestroy() {
-    this.usersSubscription.unsubscribe()
-    this.userSubscription.unsubscribe()
+    this.subscriptions.forEach(scribe => scribe.unsubscribe())
   }
 
   save() {

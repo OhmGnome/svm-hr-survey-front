@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms'
 import { HttpModule } from '@angular/http'
 import { AlertModule } from 'ng2-bootstrap/ng2-bootstrap'
 import { CommonModule } from '@angular/common'
-import { BrowserModule } from '@angular/platform-browser'
 
 import { AdminComponent } from './admin.component'
 import { UserManagerViewComponent } from './user-manager-view/user-manager-view.component'

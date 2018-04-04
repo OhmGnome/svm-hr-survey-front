@@ -8,6 +8,7 @@ import { SessionService } from './../../../core/service/session.service'
 import { Session } from './../../../core/model/session'
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { FormGroup, FormControl, Validators } from '@angular/forms'
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-session-form',
@@ -15,14 +16,13 @@ import { FormGroup, FormControl, Validators } from '@angular/forms'
   styleUrls: ['./session-form.component.css']
 })
 export class SessionFormComponent implements OnInit {
+  subscriptions: Subscription[] = new Array<Subscription>()
   sessionService: SessionService
   sessionCardService: SessionCardService
   cardService: CardService
   authService: AuthService
 
   // date: Date
-  sessionSubscription
-  sessionsSubscription
   cards: Card[]
   auth: Auth = new Auth
   form: FormGroup
@@ -43,9 +43,9 @@ export class SessionFormComponent implements OnInit {
 
   ngOnInit() {
     console.log('ngOnInit')
-    this.sessionsSubscription = this.sessionService.getCache().subscribe(sessions => this.sessions = sessions)
-    this.cardService.findCards().then(cards => this.cards = cards)
-    this.sessionSubscription = this.sessionService.sessionObservable.subscribe(session => {
+    this.subscriptions = [
+      this.sessionService.getCache().subscribe(sessions => this.sessions = sessions),
+      this.sessionService.sessionObservable.subscribe(session => {
       this.session = session
       if (session) {
         try {
@@ -58,11 +58,13 @@ export class SessionFormComponent implements OnInit {
         }
       }
     })
+  ]
+
+    this.cardService.findCards().then(cards => this.cards = cards)
   }
 
   ngOnDestroy() {
-    this.sessionsSubscription.unsubscribe()
-    this.sessionSubscription.unsubscribe()
+    this.subscriptions.forEach(scribe => scribe.unsubscribe())
   }
 
   //is explicit expiration date feature wanted?

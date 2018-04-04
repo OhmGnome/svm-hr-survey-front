@@ -6,6 +6,7 @@ import { Session } from './../../../core/model/session'
 import { Card } from './../../../core/model/card'
 import { SessionCard } from './../../../core/model/sessionCard'
 import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-cards-man',
@@ -13,13 +14,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
   styleUrls: ['./cards-man.component.css']
 })
 export class CardsManComponent implements OnInit {
-  cardService: CardService
-  sessionCardService: SessionCardService
-  sessionService: SessionService
-
   session: Session = new Session
-  sessionSubscription: any
-  cardsSubscription: any
+  subscriptions: Subscription[] = new Array<Subscription>()
   sessionCardsJoin: SessionCard[]
 
   messageCanOnlyEditOne: string = ''
@@ -28,29 +24,30 @@ export class CardsManComponent implements OnInit {
   selectedSessionCards: Card[]
   selectedCards: Card[]
 
-  constructor(cardService: CardService, sessionCardService: SessionCardService, sessionService: SessionService) {
+  constructor(private cardService: CardService, private sessionCardService: SessionCardService, private sessionService: SessionService) {
     this.cardService = cardService
     this.sessionService = sessionService
     this.sessionCardService = sessionCardService
   }
 
   ngOnInit() {
-    this.sessionSubscription = this.sessionService.sessionObservable.subscribe(session => this.session = session)
-    this.cardsSubscription = this.cardService.getCache().subscribe(cards => {
-    this.cards = cards
-      if (this.session.id) {
-        this.sessionCardService.findBySessionId(this.session.id)
-          .then(data => {
-            this.sessionCardsJoin = data
-            data.forEach(sessionCard => { this.sessionCards.push(this.cards.find(card => card.id === sessionCard.cardId)) })
-          })
-      }
-    })
+    this.subscriptions = [
+      this.sessionService.sessionObservable.subscribe(session => this.session = session),
+      this.cardService.getCache().subscribe(cards => {
+        this.cards = cards
+        if (this.session.id) {
+          this.sessionCardService.findBySessionId(this.session.id)
+            .then(data => {
+              this.sessionCardsJoin = data
+              data.forEach(sessionCard => { this.sessionCards.push(this.cards.find(card => card.id === sessionCard.cardId)) })
+            })
+        }
+      })
+    ]
   }
 
   ngOnDestroy() {
-    this.sessionSubscription.unsubscribe()
-    this.cardsSubscription.unsubscribe()
+    this.subscriptions.forEach(scribe => scribe.unsubscribe())
   }
 
   editCard() {

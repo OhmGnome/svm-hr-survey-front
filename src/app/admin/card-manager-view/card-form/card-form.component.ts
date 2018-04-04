@@ -1,8 +1,9 @@
-import { Subject } from 'rxjs/Subject'
+import { Component, OnInit } from '@angular/core'
+import { FormGroup } from '@angular/forms'
+import { Subscription } from 'rxjs/Subscription'
+
 import { Card } from './../../../core/model/card'
 import { CardService } from './../../../core/service/card.service'
-import { Component, OnInit, OnDestroy } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
 
 @Component({
   selector: 'app-card-form',
@@ -12,8 +13,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms'
 export class CardFormComponent implements OnInit {
   cardService: CardService
   cards: Card[]
-  cardsSubscription: any
-  cardSubscription: any
+  subscriptions: Subscription[] = new Array<Subscription>()
 
   card: Card = new Card
   form: FormGroup
@@ -23,13 +23,14 @@ export class CardFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cardSubscription = this.cardService.cardObservable.subscribe(card => this.card = card)
-    this.cardsSubscription = this.cardService.getCache().subscribe(cards => this.cards = cards)
+    this.subscriptions = [
+      this.cardService.cardObservable.subscribe(card => this.card = card),
+      this.cardService.getCache().subscribe(cards => this.cards = cards)
+    ]
   }
 
   ngOnDestroy() {
-    this.cardsSubscription.unsubscribe()
-    this.cardSubscription.unsubscribe()
+    this.subscriptions.forEach(scribe => scribe.unsubscribe())
   }
 
   save() {

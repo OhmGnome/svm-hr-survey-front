@@ -1,6 +1,7 @@
 import { Session } from './../../../core/model/session'
 import { SessionService } from './../../../core/service/session.service'
 import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-sessions-man',
@@ -9,8 +10,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 })
 export class SessionsManComponent implements OnInit {
   sessionService: SessionService
-
-  sessionsSubscription
+  subscriptions: Subscription[] = new Array<Subscription>()
 
   messageCanOnlyEditOne: string = ''
   sessions: Session[] = []
@@ -21,11 +21,11 @@ export class SessionsManComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.sessionsSubscription = this.sessionService.getCache().subscribe(data => this.sessions = data)
+    this.subscriptions = [this.sessionService.getCache().subscribe(data => this.sessions = data)]
   }
 
   ngOnDestroy() {
-    this.sessionsSubscription.unsubscribe()
+    this.subscriptions.forEach(scribe => scribe.unsubscribe())
   }
 
   editSession() {
