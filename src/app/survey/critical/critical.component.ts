@@ -1,12 +1,12 @@
-import { CardService } from './../../core/service/card.service'
-import { LocalStore } from './../../core/localStore'
-import { AuthService } from '../../core/service/auth.service'
-import { CardStruct } from './../../core/cardStruct'
-import { UserSessionCard } from './../../core/model/userSessionCard'
-import { UserSessionCardService } from './../../core/service/user-session-card.service'
-import { Card } from './../../core/model/card'
-import { Router } from '@angular/router'
 import { Component, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
+
+import { LocalStore } from './../../core/localStore'
+import { Card } from './../../core/model/card'
+import { CardStruct } from './../../core/model/cardStruct'
+import { UserSessionCard } from './../../core/model/userSessionCard'
+import { CardService } from './../../core/service/card.service'
+import { UserSessionCardService } from './../../core/service/user-session-card.service'
 
 @Component({
     selector: 'app-critical',
@@ -14,18 +14,16 @@ import { Component, OnInit } from '@angular/core'
     styleUrls: ['./critical.component.css']
 })
 export class CriticalComponent implements OnInit {
-    router: Router
-    service: UserSessionCardService
     currentCardSubscription
 
     cardStruct: CardStruct
     currentCard: number
+    message: string
 
-
-    constructor(router: Router, service: UserSessionCardService, private cardService: CardService) {
-        this.router = router
-        this.service = service
-    }
+    constructor(
+        private router: Router,
+        private service: UserSessionCardService,
+        private cardService: CardService) { }
 
     ngOnInit() {
         this.currentCard = 0
@@ -74,13 +72,19 @@ export class CriticalComponent implements OnInit {
     }
 
     navCard() {
-        this.service.update(this.cardStruct.usCard).then(() => {
+        this.service.update(this.cardStruct.usCard).take(1).subscribe(() => {
             this.service.cardsIndex = this.currentCard
             this.cardStruct = this.service.cards[this.currentCard]
         })
     }
 
     navProgress() {
+        let arrayOfMoreCritical = this.service.cards.filter(cardStruct => cardStruct.usCard.isMoreCritical === true)
+        if (arrayOfMoreCritical.length < 15) {
+            this.message = 'You must select at least 15 cards to continue'
+            return
+        }
+
         this.service.cards.forEach(cardStruct => cardStruct.isDirty = false)
         let progress = '/topCrit'
         this.service.setLocalStorage("progress", progress)
@@ -89,6 +93,10 @@ export class CriticalComponent implements OnInit {
     }
 
     navForceProgress() {
+        for (let i = 0; i < 16; i++) {
+            this.service.cards[i].usCard.isMoreCritical = true
+        }
+
         let progress = '/topCrit'
         this.service.setLocalStorage("progress", progress)
         this.service.progressSubj.next(progress)

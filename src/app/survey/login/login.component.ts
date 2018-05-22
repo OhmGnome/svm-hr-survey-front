@@ -1,22 +1,24 @@
-import { CardStruct } from './../../core/cardStruct'
-import { SessionCardService } from './../../core/service/session-card.service'
-import { forEach } from 'c:/Users/sdidier/node2/survey3/node_modules/@angular/router/src/utils/collection'
+import { Component, OnInit } from '@angular/core'
+import { FormGroup } from '@angular/forms'
+import { Router } from '@angular/router'
+import { Observable } from 'rxjs/Observable'
+import { forkJoin } from 'rxjs/observable/forkJoin'
+
+import { Auth } from './../../core/model/auth'
 import { Card } from './../../core/model/card'
-import { SessionCard } from './../../core/model/sessionCard'
-import { CardService } from './../../core/service/card.service'
+import { CardStruct } from './../../core/model/cardStruct'
+import { Session } from './../../core/model/session'
+import { User } from './../../core/model/user'
+import { UserSession } from './../../core/model/userSession'
 import { UserSessionCard } from './../../core/model/userSessionCard'
+import { AuthService } from './../../core/service/auth.service'
+import { CardService } from './../../core/service/card.service'
+import { SessionCardService } from './../../core/service/session-card.service'
+import { SessionService } from './../../core/service/session.service'
 import { UserSessionCardService } from './../../core/service/user-session-card.service'
 import { UserSessionService } from './../../core/service/user-session.service'
-import { UserSession } from './../../core/model/userSession'
-import { Session } from './../../core/model/session'
-import { SessionService } from './../../core/service/session.service'
-import { AuthService } from './../../core/service/auth.service'
-import { Router } from '@angular/router'
-import { Auth } from './../../core/model/auth'
-import { User } from './../../core/model/user'
 import { UserService } from './../../core/service/user.service'
-import { Component, OnInit } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
+
 
 @Component({
   selector: 'app-login',
@@ -24,14 +26,6 @@ import { FormGroup, FormControl, Validators } from '@angular/forms'
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  userService: UserService
-  authService: AuthService
-  sessionService: SessionService
-  userSessionService: UserSessionService
-  userSessionCardService: UserSessionCardService
-  cardService: CardService
-  sessionCardService: SessionCardService
-  router: Router
   cards: Card[] = []
   userSessionCards: UserSessionCard[] = []
   USCsTemp: UserSessionCard[] = []
@@ -45,38 +39,35 @@ export class LoginComponent implements OnInit {
   joinMessage = ''
   form: FormGroup
 
-  constructor(userService: UserService, authService: AuthService, router: Router, sessionService: SessionService,
-    userSessionService: UserSessionService, userSessionCardService: UserSessionCardService, cardService: CardService,
-    sessionCardService: SessionCardService) {
-    this.userService = userService
-    this.authService = authService
-    this.sessionService = sessionService
-    this.userSessionService = userSessionService
-    this.userSessionCardService = userSessionCardService
-    this.cardService = cardService
-    this.sessionCardService = sessionCardService
-    this.router = router
-  }
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private router: Router,
+    private sessionService: SessionService,
+    private userSessionService: UserSessionService,
+    private userSessionCardService: UserSessionCardService,
+    private cardService: CardService,
+    private sessionCardService: SessionCardService) { }
 
   ngOnInit() {
-    this.sessionService.findByIsActive(true).then(sessions => this.sessions = sessions || [])
+    this.sessionService.findByIsActive(true).take(1).subscribe(sessions => this.sessions = sessions || [])
   }
 
   login() {
     if (this.user.username) {
       this.userService.findByUsername(this.user.username)
-        .then(users => {
+        .catch(() => this.setLoginMessageError())
+        .take(1).subscribe(users => {
           if (users.length > 0)
             (this.checkUserExists(users[0]))
         })
-        .catch(() => this.setLoginMessageError())
     } else if (this.user.email) {
       this.userService.findByEmail(this.user.email)
-        .then(users => {
+        .catch(() => this.setLoginMessageError())
+        .take(1).subscribe(users => {
           if (users.length > 0)
             (this.checkUserExists(users[0]))
         })
-        .catch(() => this.setLoginMessageError())
     }
   }
 
@@ -91,10 +82,10 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  setLoginMessageError(): Promise<any> {
+  setLoginMessageError(): Observable<any> {
     this.loggedInMessage = 'a network error occurred'
     setTimeout(this.loggedInMessage = '', 8000)
-    return Promise.reject('404 or !update => save ')
+    return Observable.throw('404 or !update => save ')
   }
 
   selectSession(session) {
@@ -102,7 +93,7 @@ export class LoginComponent implements OnInit {
   }
 
   join() {
-    this.authService.findBySessionId(this.selectedSession.id).then((auths) => {
+    this.authService.findBySessionId(this.selectedSession.id).take(1).subscribe((auths) => {
       if (auths.length > 0) {
         let auth = auths[0]
         if (auth.password === this.auth.password
@@ -111,12 +102,12 @@ export class LoginComponent implements OnInit {
           userSession.sessionId = this.selectedSession.id
           userSession.userId = this.user.id
           this.userSessionService.findByUserIdAndSessionId(this.user.id, this.selectedSession.id)
-            .then(uSessions => {
+            .take(1).subscribe(uSessions => {
               if (uSessions.length > 0) {
                 this.joinSession(uSessions[0])
               } else {
                 this.userSessionService.create(userSession)
-                  .then(userSession => this.joinSession(userSession))
+                  .take(1).subscribe(userSession => this.joinSession(userSession))
               }
               // console.log('else')
             })
@@ -131,28 +122,41 @@ export class LoginComponent implements OnInit {
   joinSession(us: UserSession): void {
     this.userSessionCardService.userSession = us
     this.userSessionCardService.setLocalStorage("userSession", JSON.stringify(us))
-    this.userSessionCardService.findByUserSessionId(us.id).then(userSessionCards => {
-      if (userSessionCards.length > 0) {
-        this.userSessionCards = userSessionCards
-        let cardIds: number[] = []
-        userSessionCards.forEach(userSessionCard => cardIds.push(userSessionCard.cardId))
-        this.cardService.findByIdIn(cardIds).then(cards => {
-          this.cards = cards
-          this.makeSession()
-        })
-      } else {
-        this.joinUserSession(us).then(() => (console.log('====then==='),
-          this.userSessionCardService.batchSave(this.userSessionCards)))
-          .then(userSessionCards => (this.userSessionCards = userSessionCards,
-            this.makeSession()))
-      }
-    }).catch(() => this.setJoinMessageError())
+    this.userSessionCardService.findByUserSessionId(us.id)
+      .catch(() => this.setJoinMessageError())
+      .take(1)
+      .subscribe(userSessionCards => {
+        if (userSessionCards.length > 0) {
+          this.userSessionCards = userSessionCards
+          let cardIds: number[] = []
+          userSessionCards.forEach(userSessionCard => cardIds.push(userSessionCard.cardId))
+          this.cardService.findByIdIn(cardIds).take(1).subscribe(cards => {
+            this.cards = cards
+            this.makeSession()
+          })
+        } else {
+          this.joinUserSession(us)
+            .take(1)
+            .subscribe(() => {
+              console.log('====then===')
+              this.userSessionCardService.batchSave(this.userSessionCards)
+                .take(1).subscribe(userSessionCards => {
+                  this.userSessionCards = userSessionCards,
+                    this.makeSession()
+                })
+            })
+        }
+      })
   }
 
-  async joinUserSession(us) {
+  joinUserSession = (us) => {
     let cardIds: number[] = []
-    try {
-      await this.sessionCardService.findBySessionId(us.sessionId).then(sessionCards => {
+    return forkJoin(
+      this.sessionCardService.findBySessionId(us.sessionId),
+      this.cardService.findByIdIn(cardIds)
+    )
+      .map(([sessionCards, cards]) => {
+        this.cards = cards
         this.userSessionCards = []
         sessionCards.forEach(sessionCard => {
           cardIds.push(sessionCard.cardId)
@@ -162,18 +166,12 @@ export class LoginComponent implements OnInit {
           this.userSessionCards.push(userSessionCard)
         })
       })
-      await this.cardService.findByIdIn(cardIds).then(cards => {
-        this.cards = cards
-      })
-    } catch (e) {
-      console.log(e)
-    }
   }
 
-  setJoinMessageError(): Promise<any> {
+  setJoinMessageError(): Observable<any> {
     this.joinMessage = 'error: this session has no cards'
     setTimeout(this.joinMessage = '', 8000)
-    return Promise.reject('404 or !update => save ')
+    return Observable.throw('404 or !update => save ')
   }
 
   makeSession() {

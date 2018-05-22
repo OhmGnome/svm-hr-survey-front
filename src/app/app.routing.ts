@@ -1,6 +1,7 @@
-import { LoginAdminComponent } from './core/login-admin/login-admin.component'
 import { NgModule } from '@angular/core'
 import { RouterModule } from '@angular/router'
+
+import { LoginAdminComponent } from './core/login-admin/login-admin.component'
 
 @NgModule({
   imports: [

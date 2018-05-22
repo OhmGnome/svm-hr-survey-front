@@ -1,11 +1,11 @@
-import { GenericEndpoints } from './generic-endpoints'
+import { Injectable } from '@angular/core'
+import { Http } from '@angular/http'
+import { Observable } from 'rxjs/Observable'
+
 import { environment } from './../../../environments/environment'
 import { Card } from './../model/card'
 import { SessionCard } from './../model/sessionCard'
-import { Injectable } from '@angular/core'
-import { Headers, Http } from '@angular/http'
-
-import 'rxjs/add/operator/toPromise'
+import { GenericEndpoints } from './generic-endpoints'
 
 @Injectable()
 export class SessionCardService extends GenericEndpoints<SessionCard> {
@@ -16,21 +16,19 @@ export class SessionCardService extends GenericEndpoints<SessionCard> {
     super(http, new SessionCard)
   }
 
-  findBySessionId(id: number): Promise<SessionCard[]> {
+  findBySessionId(id: number): Observable<SessionCard[]> {
     return this.http.get(environment.apiBaseUrl + this.model + '/search/findBySessionId?id=' + id)
-      .toPromise()
-      .then(response => response.json()._embedded.sessionCard as SessionCard[])
+      .map(response => response.json()._embedded.sessionCard as SessionCard[])
       .catch(this.handleError)
   }
 
-  setSessionCards(id: number): Promise<SessionCard[]> {
-    return this.findBySessionId(id).then(data => this.sessionCards = data)
+  setSessionCards(id: number): Observable<SessionCard[]> {
+    return this.findBySessionId(id).map(data => this.sessionCards = data)
   }
 
-  findByCardId(id: number): Promise<SessionCard[]> {
+  findByCardId(id: number): Observable<SessionCard[]> {
     return this.http.get(environment.apiBaseUrl + this.model + '/search/findByCardId?id=' + id)
-      .toPromise()
-      .then(response => response.json()._embedded.sessionCard as SessionCard[])
+      .map(response => response.json()._embedded.sessionCard as SessionCard[])
       .catch(this.handleError)
   }
 

@@ -1,12 +1,12 @@
-import { forEach } from 'c:/Users/sdidier/node2/survey3/node_modules/@angular/router/src/utils/collection'
-import { SessionService } from './../../../core/service/session.service'
+import { Component, OnInit } from '@angular/core'
+import { Subscription } from 'rxjs/Subscription'
+
 import { SessionCardService } from '../../../core/service/session-card.service'
-import { CardService } from './../../../core/service/card.service'
-import { Session } from './../../../core/model/session'
 import { Card } from './../../../core/model/card'
+import { Session } from './../../../core/model/session'
 import { SessionCard } from './../../../core/model/sessionCard'
-import { Component, OnInit, OnDestroy } from '@angular/core'
-import { Subscription } from 'rxjs/Subscription';
+import { CardService } from './../../../core/service/card.service'
+import { SessionService } from './../../../core/service/session.service'
 
 @Component({
   selector: 'app-cards-man',
@@ -24,10 +24,10 @@ export class CardsManComponent implements OnInit {
   selectedSessionCards: Card[]
   selectedCards: Card[]
 
-  constructor(private cardService: CardService, private sessionCardService: SessionCardService, private sessionService: SessionService) {
-    this.cardService = cardService
-    this.sessionService = sessionService
-    this.sessionCardService = sessionCardService
+  constructor(
+    private cardService: CardService,
+    private sessionCardService: SessionCardService,
+    private sessionService: SessionService) {
   }
 
   ngOnInit() {
@@ -37,9 +37,11 @@ export class CardsManComponent implements OnInit {
         this.cards = cards
         if (this.session.id) {
           this.sessionCardService.findBySessionId(this.session.id)
-            .then(data => {
+            .take(1).subscribe(data => {
               this.sessionCardsJoin = data
-              data.forEach(sessionCard => { this.sessionCards.push(this.cards.find(card => card.id === sessionCard.cardId)) })
+              data.forEach(sessionCard => {
+                this.sessionCards.push(this.cards.find(card => card.id === sessionCard.cardId))
+              })
             })
         }
       })
@@ -62,7 +64,8 @@ export class CardsManComponent implements OnInit {
       this.cardService.delete(card.id)
       this.cards.splice(this.cards.indexOf(card, 0), 1)
       this.sessionCards.splice(this.sessionCards.indexOf(card, 0), 1)
-      this.sessionCardsJoin.splice(this.sessionCardsJoin.indexOf(this.sessionCardsJoin.find(sessionCard => sessionCard.cardId === card.id), 0), 1)
+      this.sessionCardsJoin.splice(this.sessionCardsJoin.indexOf(
+        this.sessionCardsJoin.find(sessionCard => sessionCard.cardId === card.id), 0), 1)
     })
   }
 
@@ -74,11 +77,13 @@ export class CardsManComponent implements OnInit {
         let sessionCard = new SessionCard
         sessionCard.cardId = cardId
         sessionCard.sessionId = this.session.id
-        this.sessionCardService.create(sessionCard).then((sessionCardSaved) => {
-          this.sessionCardsJoin.push(sessionCardSaved)
-          let card = this.cards.find(card => card.id === sessionCardSaved.cardId)
-          this.sessionCards.push(card)
-        })
+        this.sessionCardService.create(sessionCard)
+          .take(1)
+          .subscribe((sessionCardSaved) => {
+            this.sessionCardsJoin.push(sessionCardSaved)
+            let card = this.cards.find(card => card.id === sessionCardSaved.cardId)
+            this.sessionCards.push(card)
+          })
       }
     })
   }
@@ -87,9 +92,10 @@ export class CardsManComponent implements OnInit {
     this.selectedSessionCards.forEach(card => {
       let sessionCard = this.sessionCardsJoin.find(sessionCard => sessionCard.cardId === card.id)
       this.sessionCardService.delete(sessionCard.id)
-        .then(() => {
-          this.sessionCards.splice(this.sessionCards.indexOf(this.sessionCards.find(card => card.id === sessionCard.cardId), 0), 1)
-          this.sessionCardsJoin.splice(this.sessionCardsJoin.indexOf(sessionCard, 0), 1)
+        .take(1)
+        .subscribe(() => {
+          this.sessionCards = this.sessionCards.filter(card => card.id !== sessionCard.cardId)
+          this.sessionCardsJoin = this.sessionCardsJoin.filter(sessionCard => sessionCard.cardId !== card.id)
         })
     })
   }

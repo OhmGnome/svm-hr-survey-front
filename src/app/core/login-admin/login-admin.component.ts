@@ -1,10 +1,12 @@
+import { Component, OnInit } from '@angular/core'
+import { FormGroup } from '@angular/forms'
 import { Router } from '@angular/router'
+import { Observable } from 'rxjs/Observable'
+
 import { UserService } from '../service/user.service'
 import { Auth } from './../model/auth'
 import { User } from './../model/user'
 import { AuthService } from './../service/auth.service'
-import { Component, OnInit } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
 
 @Component({
   selector: 'app-login-admin',
@@ -17,7 +19,8 @@ export class LoginAdminComponent implements OnInit {
   loggedInMessage = ''
   form: FormGroup
 
-  constructor(private authService: AuthService,
+  constructor(
+    private authService: AuthService,
     private userService: UserService,
     private router: Router) { }
 
@@ -27,18 +30,19 @@ export class LoginAdminComponent implements OnInit {
   login() {
     if (this.user.username) {
       this.userService.findByUsername(this.user.username)
-        .then(users => {
+        .catch(() => this.setLoginMessageError())
+        .take(1).subscribe(users => {
           if (users.length > 0)
             (this.checkUserExists(users[0]))
         })
-        .catch(() => this.setLoginMessageError())
     } else if (this.user.email) {
       this.userService.findByEmail(this.user.email)
-        .then(users => {
+        .catch(() => this.setLoginMessageError())
+        .take(1).subscribe(users => {
           if (users.length > 0)
             (this.checkUserExists(users[0]))
         })
-        .catch(() => this.setLoginMessageError())
+
     }
   }
 
@@ -48,7 +52,7 @@ export class LoginAdminComponent implements OnInit {
       this.user = user
       this.userService.user = user
       this.loggedInMessage = 'Welcome ' + user.username
-      this.authService.login(user.id, this.auth.password).then(() => {
+      this.authService.login(user.id, this.auth.password).take(1).subscribe(() => {
         if (this.authService.isLoggedIn) {
           let redirect = this.authService.redirectUrl ? this.authService.redirectUrl : '/admin/sessionManagerView'
           this.router.navigate([redirect])
@@ -60,8 +64,9 @@ export class LoginAdminComponent implements OnInit {
     }
   }
 
-  setLoginMessageError(): void {
+  setLoginMessageError = (): Observable<any> => {
     this.loggedInMessage = 'a network error occurred'
     setTimeout(this.loggedInMessage = '', 8000)
+    return Observable.throw('a network error occurred')
   }
 }

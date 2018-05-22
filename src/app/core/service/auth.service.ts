@@ -1,8 +1,13 @@
-import { environment } from './../../../environments/environment'
-import { GenericEndpoints } from './generic-endpoints'
-import { Http, Headers } from '@angular/http'
-import { Auth } from './../model/auth'
+import 'rxjs/add/operator/catch'
+import 'rxjs/add/operator/map'
+
 import { Injectable } from '@angular/core'
+import { Http } from '@angular/http'
+import { Observable } from 'rxjs/Observable'
+
+import { environment } from './../../../environments/environment'
+import { Auth } from './../model/auth'
+import { GenericEndpoints } from './generic-endpoints'
 
 @Injectable()
 export class AuthService extends GenericEndpoints<Auth>{
@@ -14,19 +19,19 @@ export class AuthService extends GenericEndpoints<Auth>{
     super(http, new Auth)
   }
 
-  findByUserId(id: number): Promise<Auth[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByUserId?id=' + id, this.headers)
-      .toPromise()
-      .then(response => response.json()._embedded.auth as Auth[])
-      .catch(this.handleError)
+  findByUserId(id: number): Observable<Auth[]> {
+    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByUserId?id=' + id, this.options)
+    .catch(this.handleError)  
+    .map(response => response.json()._embedded.auth as Auth[])
   }
 
   login(id: number, password: string) {
-    return this.findByUserId(id).then(auths => {
+    return this.findByUserId(id)
+    .map(auths => {
       let auth = auths[0]
       if (auth)
-        if (auth.role = "admin")
-          if (auth.password = password)
+        if (auth.role === "admin")
+          if (auth.password === password)
             this.isLoggedIn = true
           else this.isLoggedIn = false
         else this.isLoggedIn = false
@@ -38,10 +43,9 @@ export class AuthService extends GenericEndpoints<Auth>{
     this.isLoggedIn = false
   }
 
-  findBySessionId(id): Promise<Auth[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findBySessionId?id=' + id, this.headers)
-      .toPromise()
-      .then(response => response.json()._embedded.auth as Auth[])
-      .catch(this.handleError)
+  findBySessionId(id): Observable<Auth[]> {
+    return this.http.get(environment.apiBaseUrl + this.model + '/search/findBySessionId?id=' + id, this.options)
+    .catch(this.handleError)  
+    .map(response => response.json()._embedded.auth as Auth[])
   }
 }

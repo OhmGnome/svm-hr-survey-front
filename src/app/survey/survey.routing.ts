@@ -1,14 +1,13 @@
-import { LoginAdminComponent } from './../core/login-admin/login-admin.component'
-import { TopSumComponent } from './top-sum/top-sum.component'
-import { StrongComponent } from './strong/strong.component'
-import { TopCritComponent } from './top-crit/top-crit.component'
-import { RegisterComponent } from './register/register.component'
+import { NgModule } from '@angular/core'
+import { RouterModule } from '@angular/router'
+
 import { CriticalComponent } from './critical/critical.component'
 import { LoginComponent } from './login/login.component'
+import { RegisterComponent } from './register/register.component'
+import { StrongComponent } from './strong/strong.component'
 import { SurveyComponent } from './survey.component'
-
-import { NgModule } from '@angular/core'
-import { Routes, RouterModule } from '@angular/router'
+import { TopCritComponent } from './top-crit/top-crit.component'
+import { TopSumComponent } from './top-sum/top-sum.component'
 
 
 @NgModule({
@@ -23,7 +22,7 @@ import { Routes, RouterModule } from '@angular/router'
         path: 'survey',
         component: SurveyComponent,
         children: [
-          {  
+          {
             path: '',
             component: LoginComponent,
           },

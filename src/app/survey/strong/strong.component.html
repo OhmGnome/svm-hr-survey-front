@@ -16,7 +16,6 @@
 <div class="cards-container">
   <div class="card" *ngFor="let cardStruct of cards">
 
-    <!--<div class="col-md-6 col-xs-6">-->
       <a (click)="cardStruct.usCard.isGreen = true; cardStruct.isDirty = true;">
         <div class="col-md-6 col-xs-6" [ngClass]="{'pair': true, 'bgGrey': !cardStruct.usCard.isGreen, 'bgBlue': cardStruct.isDirty && cardStruct.usCard.isGreen}">
           <div class="card-text">
@@ -24,9 +23,7 @@
           </div>
         </div>
       </a>
-    <!--</div>-->
 
-    <!--<div class="col-md-6 col-xs-6">-->
       <a (click)="cardStruct.usCard.isGreen = false; cardStruct.isDirty = true;">
 
         <div class="col-md-6 col-xs-6" [ngClass]="{'pair': true, 'bgGrey': cardStruct.usCard.isGreen, 'bgBlue': cardStruct.isDirty && !cardStruct.usCard.isGreen}">
@@ -35,7 +32,6 @@
           </div>
         </div>
       </a>
-    <!--</div>-->
     
   </div>
 </div>

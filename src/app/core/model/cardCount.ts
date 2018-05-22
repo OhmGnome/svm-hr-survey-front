@@ -1,5 +1,5 @@
-import { Card } from './model/card'
-import { UserSessionCard } from './model/userSessionCard'
+import { Card } from './card'
+
 export class CardCount {
     card: Card
     isMoreCritical: number

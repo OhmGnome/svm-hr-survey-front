@@ -1,14 +1,16 @@
+import { Component, OnInit } from '@angular/core'
+import { FormGroup } from '@angular/forms'
+import { Observable } from 'rxjs/Observable'
+import { Subscription } from 'rxjs/Subscription'
+
 import { Auth } from './../../../core/model/auth'
-import { AuthService } from './../../../core/service/auth.service'
 import { Card } from './../../../core/model/card'
-import { CardService } from './../../../core/service/card.service'
+import { Session } from './../../../core/model/session'
 import { SessionCard } from './../../../core/model/sessionCard'
+import { AuthService } from './../../../core/service/auth.service'
+import { CardService } from './../../../core/service/card.service'
 import { SessionCardService } from './../../../core/service/session-card.service'
 import { SessionService } from './../../../core/service/session.service'
-import { Session } from './../../../core/model/session'
-import { Component, OnInit, OnDestroy } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-session-form',
@@ -17,16 +19,12 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class SessionFormComponent implements OnInit {
   subscriptions: Subscription[] = new Array<Subscription>()
-  sessionService: SessionService
-  sessionCardService: SessionCardService
-  cardService: CardService
-  authService: AuthService
 
   // date: Date
   cards: Card[]
   auth: Auth = new Auth
   form: FormGroup
-  
+
   sessions: Session[]
   session: Session = new Session
   // startDate: Date = new Date
@@ -34,33 +32,32 @@ export class SessionFormComponent implements OnInit {
   startSessionwithCards: boolean
 
 
-  constructor(sessionService: SessionService, sessionCardService: SessionCardService, cardService: CardService, authService: AuthService) {
-    this.sessionService = sessionService
-    this.sessionCardService = sessionCardService
-    this.cardService = cardService
-    this.authService = authService
-  }
+  constructor(
+    private sessionService: SessionService,
+    private sessionCardService: SessionCardService,
+    private cardService: CardService,
+    private authService: AuthService) { }
 
   ngOnInit() {
     console.log('ngOnInit')
     this.subscriptions = [
       this.sessionService.getCache().subscribe(sessions => this.sessions = sessions),
       this.sessionService.sessionObservable.subscribe(session => {
-      this.session = session
-      if (session) {
-        try {
-          this.authService.findBySessionId(session.id).then(data => {
-          if (data.length > 0)
-          this.auth = data[0]
-          })
-        } catch (e) {
-          console.log('error at authService.findBySessionId')
+        this.session = session
+        if (session) {
+          try {
+            this.authService.findBySessionId(session.id).take(1).subscribe(data => {
+              if (data.length > 0)
+                this.auth = data[0]
+            })
+          } catch (e) {
+            console.log('error at authService.findBySessionId')
+          }
         }
-      }
-    })
-  ]
+      })
+    ]
 
-    this.cardService.findCards().then(cards => this.cards = cards)
+    this.cardService.findCards().take(1).subscribe(cards => this.cards = cards)
   }
 
   ngOnDestroy() {
@@ -68,7 +65,7 @@ export class SessionFormComponent implements OnInit {
   }
 
   //is explicit expiration date feature wanted?
-  save(): Promise<any> {
+  save(): Observable<any> {
     // this.session.isActive = true
 
     // if (!this.session.startDate) this.session.startDate = new Date
@@ -89,7 +86,6 @@ export class SessionFormComponent implements OnInit {
       }
     }
 
-    // console.log('save session')
     // this.session.isActive = false
     // this.date = new Date
     // this.startDate = new Date(this.session.startDate)
@@ -115,7 +111,7 @@ export class SessionFormComponent implements OnInit {
       return this.sessionService.update(this.session)
     } else {
       this.session.startDate = new Date
-      return this.sessionService.create(this.session).then((session) => {
+      return this.sessionService.create(this.session).take(1).map((session) => {
         this.session = session
         this.sessions.push(session)
 
@@ -134,7 +130,7 @@ export class SessionFormComponent implements OnInit {
 
   savePassword(sessionId: number): void {
     this.auth.sessionId = sessionId
-    this.authService.findBySessionId(sessionId).then(data => {
+    this.authService.findBySessionId(sessionId).take(1).subscribe(data => {
       // console.log(data)
       if (data.length > 0) {
         this.auth.id = data[0].id
@@ -150,9 +146,6 @@ export class SessionFormComponent implements OnInit {
   async saveOrUpdateAuth(sessionId: number) {
     try {
       await this.savePassword(sessionId)
-      // if (this.auth.id)
-      //   return true
-      // else this.authService.create(this.auth)
     } catch (err) {
     }
   }
@@ -162,6 +155,6 @@ export class SessionFormComponent implements OnInit {
   }
 
   saveAndManage() {
-    this.save().then(() => this.sessionService.sessionSubject.next(this.session))
+    this.save().take(1).subscribe(() => this.sessionService.sessionSubject.next(this.session))
   }
 }

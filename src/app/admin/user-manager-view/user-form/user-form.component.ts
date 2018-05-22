@@ -1,8 +1,9 @@
-import { UserService } from './../../../core/service/user.service'
-import { User } from './../../../core/model/user'
 import { Component, OnInit } from '@angular/core'
-import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { Subscription } from 'rxjs/Subscription';
+import { FormGroup } from '@angular/forms'
+import { Subscription } from 'rxjs/Subscription'
+
+import { User } from './../../../core/model/user'
+import { UserService } from './../../../core/service/user.service'
 
 
 @Component({
@@ -11,16 +12,13 @@ import { Subscription } from 'rxjs/Subscription';
   styleUrls: ['./user-form.component.css']
 })
 export class UserFormComponent implements OnInit {
-  userService: UserService
   users: User[]
   subscriptions: Subscription[] = new Array<Subscription>()
 
   user: User = new User
   form: FormGroup
 
-  constructor(userService: UserService) {
-    this.userService = userService
-  }
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
     this.subscriptions = [
@@ -36,10 +34,10 @@ export class UserFormComponent implements OnInit {
   save() {
     if (!this.user.id) {
       this.userService.create(this.user)
-        .then(data => (this.user = data, this.users.push(data)))
+        .take(1).subscribe(data => (this.user = data, this.users.push(data)))
     } else {
       this.userService.update(this.user)
-        .then(data => this.user = data)
+        .take(1).subscribe(data => this.user = data)
     }
   }
 

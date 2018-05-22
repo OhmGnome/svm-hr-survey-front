@@ -1,13 +1,11 @@
-import { LocalStore } from './../core/localStore'
-import { CardStruct } from './../core/cardStruct'
-import { UserSession } from './../core/model/userSession'
-import { SessionCardService } from './../core/service/session-card.service'
+import { Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
+import { Subscription } from 'rxjs/Subscription'
+
+import { AuthService } from '../core/service/auth.service'
+import { LocalStore } from './../core/localStore'
 import { CardService } from './../core/service/card.service'
 import { UserSessionCardService } from './../core/service/user-session-card.service'
-import { AuthService } from '../core/service/auth.service'
-import { Component, OnInit, OnDestroy } from '@angular/core'
-import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-header',
@@ -16,20 +14,16 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class HeaderComponent implements OnInit {
   subscriptions: Subscription[] = new Array<Subscription>()
-  service: UserSessionCardService
-  router: Router
-  cardService: CardService
 
   presentRoute: string
   isLoggedIn: boolean
   progress: string
 
-  constructor(router: Router, service: UserSessionCardService, cardService: CardService,
-  private authService: AuthService) {
-    this.service = service
-    this.router = router
-    this.cardService = cardService
-  }
+  constructor(
+    private router: Router,
+    private service: UserSessionCardService,
+    private cardService: CardService,
+    private authService: AuthService) {}
 
   ngOnInit() {
     this.subscriptions = [this.service.progressObs.subscribe(data => this.progress = data)]

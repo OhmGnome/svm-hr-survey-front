@@ -1,7 +1,8 @@
+import { Component, OnInit } from '@angular/core'
+import { Subscription } from 'rxjs/Subscription'
+
 import { Session } from './../../../core/model/session'
 import { SessionService } from './../../../core/service/session.service'
-import { Component, OnInit, OnDestroy } from '@angular/core'
-import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-sessions-man',
@@ -9,16 +10,13 @@ import { Subscription } from 'rxjs/Subscription';
   styleUrls: ['./sessions-man.component.css']
 })
 export class SessionsManComponent implements OnInit {
-  sessionService: SessionService
   subscriptions: Subscription[] = new Array<Subscription>()
 
   messageCanOnlyEditOne: string = ''
   sessions: Session[] = []
   selectedSessions: Session[]
 
-  constructor(sessionService: SessionService) {
-    this.sessionService = sessionService
-  }
+  constructor(private sessionService: SessionService) { }
 
   ngOnInit() {
     this.subscriptions = [this.sessionService.getCache().subscribe(data => this.sessions = data)]

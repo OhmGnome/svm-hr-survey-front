@@ -1,13 +1,13 @@
+import { Component, OnInit } from '@angular/core'
+import { Subscription } from 'rxjs/Subscription'
 
-import { forEach } from 'c:/Users/sdidier/node2/survey3/node_modules/@angular/router/src/utils/collection'
-import { SessionService } from './../../../core/service/session.service'
 import { UserSessionService } from '../../../core/service/user-session.service'
-import { UserService } from './../../../core/service/user.service'
 import { Session } from './../../../core/model/session'
 import { User } from './../../../core/model/user'
 import { UserSession } from './../../../core/model/userSession'
-import { Component, OnInit, OnDestroy } from '@angular/core'
-import { Subscription } from 'rxjs/Subscription';
+import { SessionService } from './../../../core/service/session.service'
+import { UserService } from './../../../core/service/user.service'
+
 
 @Component({
   selector: 'app-users-man',
@@ -15,9 +15,6 @@ import { Subscription } from 'rxjs/Subscription';
   styleUrls: ['./users-man.component.css']
 })
 export class UsersManComponent implements OnInit {
-  userService: UserService
-  userSessionService: UserSessionService
-  sessionService: SessionService
   subscriptions: Subscription[] = new Array<Subscription>()
 
   session: Session = new Session
@@ -29,10 +26,10 @@ export class UsersManComponent implements OnInit {
   selectedUserSessions: User[]
   selectedUsers: User[]
 
-  constructor(userService: UserService, userSessionService: UserSessionService, sessionService: SessionService) {
-    this.userService = userService
-    this.sessionService = sessionService
-    this.userSessionService = userSessionService
+  constructor(
+    private userService: UserService,
+    private userSessionService: UserSessionService,
+    private sessionService: SessionService) {
   }
 
   ngOnInit() {
@@ -40,7 +37,7 @@ export class UsersManComponent implements OnInit {
       this.userService.getCache().subscribe(users => this.users = users),
       this.sessionService.sessionObservable.subscribe(session => this.session = session)
     ]
-    if (this.session.id) this.userSessionService.findBySessionId(this.session.id).then(data => {
+    if (this.session.id) this.userSessionService.findBySessionId(this.session.id).take(1).subscribe(data => {
       this.userSessionsJoin = data
       data.forEach(userSession => { this.userSessions.push(this.users.find(user => user.id === userSession.userId)) })
     })
@@ -72,7 +69,7 @@ export class UsersManComponent implements OnInit {
         let userSession = new UserSession
         userSession.userId = user.id
         userSession.sessionId = this.session.id
-        this.userSessionService.create(userSession).then((userSessionSaved) => {
+        this.userSessionService.create(userSession).take(1).subscribe((userSessionSaved) => {
           this.userSessionsJoin.push(userSessionSaved)
           let user = this.users.find(user => user.id === userSessionSaved.userId)
           this.userSessions.push(user)
@@ -85,7 +82,7 @@ export class UsersManComponent implements OnInit {
     this.selectedUserSessions.forEach(user => {
       let userSession = this.userSessionsJoin.find(userSession => userSession.userId === user.id)
       this.userSessionService.delete(userSession.id)
-        .then(() => {
+        .take(1).subscribe(() => {
           this.userSessions.splice(this.userSessions.indexOf(this.userSessions.find(user => user.id === userSession.userId), 0), 1)
           this.userSessionsJoin.splice(this.userSessionsJoin.indexOf(userSession, 0), 1)
         })

@@ -1,3 +1,5 @@
+import 'rxjs/add/operator/take'
+
 import { Component, OnInit } from '@angular/core'
 import { FormGroup } from '@angular/forms'
 import { Subscription } from 'rxjs/Subscription'
@@ -11,16 +13,13 @@ import { CardService } from './../../../core/service/card.service'
   styleUrls: ['./card-form.component.css']
 })
 export class CardFormComponent implements OnInit {
-  cardService: CardService
   cards: Card[]
   subscriptions: Subscription[] = new Array<Subscription>()
 
   card: Card = new Card
   form: FormGroup
 
-  constructor(cardService: CardService) {
-    this.cardService = cardService
-  }
+  constructor(private cardService: CardService) { }
 
   ngOnInit() {
     this.subscriptions = [
@@ -36,7 +35,8 @@ export class CardFormComponent implements OnInit {
   save() {
     if (!this.card.id) {
       this.cardService.create(this.card)
-        .then(data => (this.card = data,
+        .take(1)
+        .subscribe(data => (this.card = data,
           this.cards.push(data)))
     } else {
       this.cardService.update(this.card)

@@ -1,15 +1,12 @@
-import { forEach } from 'c:/Users/sdidier/node2/survey3/node_modules/@angular/router/src/utils/collection'
-import { CardCount } from './../../core/cardCount'
-import { UserSession } from '../../core/model/userSession'
-import { UserSessionService } from './../../core/service/user-session.service'
-import { LocalStore } from './../../core/localStore'
-import { CardService } from './../../core/service/card.service'
-import { UserSessionCard } from './../../core/model/userSessionCard'
-import { AuthService } from '../../core/service/auth.service'
-import { Router } from '@angular/router'
-import { CardStruct } from './../../core/cardStruct'
-import { UserSessionCardService } from '../../core/service/user-session-card.service'
 import { Component, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
+
+import { UserSessionCardService } from '../../core/service/user-session-card.service'
+import { LocalStore } from './../../core/localStore'
+import { CardCount } from './../../core/model/cardCount'
+import { UserSessionCard } from './../../core/model/userSessionCard'
+import { CardService } from './../../core/service/card.service'
+import { UserSessionService } from './../../core/service/user-session.service'
 
 @Component({
   selector: 'app-top-sum',
@@ -19,7 +16,8 @@ import { Component, OnInit } from '@angular/core'
 export class TopSumComponent implements OnInit {
   cardCounts: CardCount[] = []
 
-  constructor(private router: Router,
+  constructor(
+    private router: Router,
     private service: UserSessionCardService,
     private userSessionservice: UserSessionService,
     private cardService: CardService) { }
@@ -28,12 +26,12 @@ export class TopSumComponent implements OnInit {
     let usCards: UserSessionCard[] = []
     LocalStore.getCards(this.service, this.cardService).then(() => {
       this.userSessionservice.findBySessionId(this.service.userSession.sessionId)
-        .then(userSessions => {
+        .take(1).subscribe(userSessions => {
           let numUserSessions = userSessions.length
           let userSessionIds: number[] = []
           userSessions.forEach(userSession => userSessionIds.push(userSession.id))
           this.service.findByUserSessionIdIn(userSessionIds)
-            .then(usCards => {
+            .take(1).subscribe(usCards => {
               this.service.cards.forEach(cardStruct => {
                 let isMoreCriticalCount: number = 0
                 let isTop15Count: number = 0

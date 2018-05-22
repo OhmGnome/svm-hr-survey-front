@@ -1,11 +1,10 @@
-import { CardService } from './../../core/service/card.service'
-import { LocalStore } from './../../core/localStore'
-import { UserSessionCard } from './../../core/model/userSessionCard'
-import { AuthService } from '../../core/service/auth.service'
-import { Router } from '@angular/router'
-import { CardStruct } from './../../core/cardStruct'
-import { UserSessionCardService } from '../../core/service/user-session-card.service'
 import { Component, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
+
+import { UserSessionCardService } from '../../core/service/user-session-card.service'
+import { LocalStore } from './../../core/localStore'
+import { CardStruct } from './../../core/model/cardStruct'
+import { CardService } from './../../core/service/card.service'
 
 @Component({
   selector: 'app-strong',
@@ -13,17 +12,15 @@ import { Component, OnInit } from '@angular/core'
   styleUrls: ['./strong.component.css']
 })
 export class StrongComponent implements OnInit {
-  service: UserSessionCardService
-  router: Router
 
   cards: CardStruct[] = []
   selectedCount: number = 0
   message = ''
 
-  constructor(router: Router, service: UserSessionCardService, private cardService: CardService) {
-    this.router = router
-    this.service = service
-  }
+  constructor(
+    private router: Router,
+    private service: UserSessionCardService,
+    private cardService: CardService) { }
 
   ngOnInit() {
     LocalStore.getCards(this.service, this.cardService).then(() =>

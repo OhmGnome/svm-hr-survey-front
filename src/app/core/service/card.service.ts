@@ -1,13 +1,13 @@
-import { GenericEndpoints } from './generic-endpoints'
-import { environment } from './../../../environments/environment'
-import { Card } from './../model/card'
-import { Injectable } from '@angular/core'
-import { Headers, Http } from '@angular/http'
+import 'rxjs/add/operator/publishReplay'
 
-import 'rxjs/add/operator/toPromise'
+import { Injectable } from '@angular/core'
+import { Http } from '@angular/http'
+import { Observable } from 'rxjs/Observable'
 import { Subject } from 'rxjs/Subject'
 
-import 'rxjs/add/operator/publishReplay'
+import { environment } from './../../../environments/environment'
+import { Card } from './../model/card'
+import { GenericEndpoints } from './generic-endpoints'
 
 @Injectable()
 export class CardService extends GenericEndpoints<Card> {
@@ -24,25 +24,23 @@ export class CardService extends GenericEndpoints<Card> {
     super(http, new Card)
   }
 
-  findCards(): Promise<Card[]> {
-    return this.http.get(environment.apiBaseUrl + this.model, { headers: this.headers })
-      .toPromise()
-      .then(response => response.json()._embedded.card as Card[])
+  findCards(): Observable<Card[]> {
+    return this.http.get(environment.apiBaseUrl + this.model, this.options)
+      .map(response => response.json()._embedded.card as Card[])
       .catch(this.handleError)
   }
 
   getCache() {
     if (!this.cardsObservable) {
-      this.cardsObservable = this.http.get(environment.apiBaseUrl + this.model, { headers: this.headers })
+      this.cardsObservable = this.http.get(environment.apiBaseUrl + this.model, this.options)
         .map(response => (response.json()._embedded.card)).publishReplay(1).refCount()
     }
     return this.cardsObservable
   }
 
-  findByIdIn(ids: number[]): Promise<Card[]> {
+  findByIdIn(ids: number[]): Observable<Card[]> {
     return this.http.get(environment.apiBaseUrl + this.model + '/search/findByIdIn?ids=' + JSON.stringify(ids).replace('[', '').replace(']', ''))
-      .toPromise()
-      .then(response => response.json()._embedded.card as Card[])
+      .map(response => response.json()._embedded.card as Card[])
       .catch(this.handleError)
   }
 

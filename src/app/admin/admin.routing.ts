@@ -1,11 +1,11 @@
+import { NgModule } from '@angular/core'
+import { RouterModule } from '@angular/router'
+
 import { AuthGuard } from './../core/service/auth-guard.service'
+import { AdminComponent } from './admin.component'
+import { CardManagerViewComponent } from './card-manager-view/card-manager-view.component'
 import { SessionManagerViewComponent } from './session-manager-view/session-manager-view.component'
 import { UserManagerViewComponent } from './user-manager-view/user-manager-view.component'
-import { CardManagerViewComponent } from './card-manager-view/card-manager-view.component'
-import { AdminComponent } from './admin.component'
-
-import { NgModule } from '@angular/core'
-import { Routes, RouterModule } from '@angular/router'
 
 
 @NgModule({

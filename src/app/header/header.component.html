@@ -1,7 +1,7 @@
 <div class="col-md-6 col-xs-12">
 	<ul class="nav nav-pills">
-		<li ng-class="{active:isActive('/login')}"><a routerLink="/survey/login" routerLinkActive="active" [hidden]="!isLoggedin" (click)="currentRoute('/login')">Login</a></li>
-		<li ng-class="{active:isActive('/login')}"><a routerLink="/survey/login" routerLinkActive="active" [hidden]="isLoggedin" (click)="logout()">Logout</a></li>
+		<li ng-class="{active:isActive('/login')}"><a routerLink="/survey/login" routerLinkActive="active" [hidden]="!isLoggedIn" (click)="currentRoute('/login')">Login</a></li>
+		<li ng-class="{active:isActive('/login')}"><a routerLink="/survey/login" routerLinkActive="active" [hidden]="isLoggedIn" (click)="logout()">Logout</a></li>
 		<li ng-class="{active:isActive('/survey')}"><a (click)="surveyRoute('/survey')">Survey</a></li>
 		<li ng-class="{active:isActive('/topSum')}"><a routerLink="/survey/topSum" routerLinkActive="active" (click)="currentRoute('/topSum')">Results</a></li>
 		<li ng-class="{active:isActive('/admin')}"><a routerLink="/admin/sessionManagerView" routerLinkActive="active" (click)="currentRoute('/admin')">Manage</a></li>
