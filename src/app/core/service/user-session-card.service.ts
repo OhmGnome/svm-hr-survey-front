@@ -21,44 +21,44 @@ export class UserSessionCardService extends GenericEndpoints<UserSessionCard>  {
   progressObs = this.progressSubj.asObservable()
 
   constructor(public http: Http) {
-    super(http, new UserSessionCard)
+    super(http, 'userSessionCard')
   }
 
   findByUserSessionId(id) {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByUserSessionId?id=' + id)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByUserSessionId?id=' + id)
       .map(response => response.json()._embedded.userSessionCard as UserSessionCard[])
       .catch(this.handleError)
   }
 
   findByUserSessionIdIn(ids: number[]): Observable<UserSessionCard[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByUserSessionIdIn?ids=' + JSON.stringify(ids).replace('[', '').replace(']', ''))
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByUserSessionIdIn?ids=' + JSON.stringify(ids).replace('[', '').replace(']', ''))
       .map(response => response.json()._embedded.userSessionCard as UserSessionCard[])
       .catch(this.handleError)
   }
 
   findUserSessionCards(): Observable<UserSessionCard[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + 'Card')
+    return this.http.get(environment.apiBaseUrl + this.modelName + 'Card')
       .map(response => response.json()._embedded.userSessionCard as UserSessionCard[])
       .catch(this.handleError)
   }
 
   findByCardId(id) {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByCardId?id=' + id)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByCardId?id=' + id)
       .map(response => response.json()._embedded.userSessionCard as UserSessionCard[])
       .catch(this.handleError)
   }
 
   batchSave(UserSessionCards: UserSessionCard[]): Observable<UserSessionCard[]> {
-    return this.http.post(environment.apiBaseUrl + this.model + '/batch/save', UserSessionCards)
+    return this.http.post(environment.apiBaseUrl + this.modelName + '/batch/save', UserSessionCards)
       .map(response => response.json() as UserSessionCard[])
       .catch(this.handleError)
   }
 
-  getLocalStorage = function (property) {
+  getLocalStorage (property) {
     return window.localStorage.getItem(property)
   }
 
-  setLocalStorage = function (property, value) {
+  setLocalStorage (property, value) {
     window.localStorage.setItem(property, value)
   }
 

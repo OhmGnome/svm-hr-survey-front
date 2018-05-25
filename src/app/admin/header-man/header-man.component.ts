@@ -31,7 +31,7 @@ export class HeaderManComponent implements OnInit {
     this.presentRoute = route
   }
 
-  isActive = function (route: string) {
+  isActive(route: string) {
     return route === this.presentRoute
   }
 }

@@ -16,11 +16,11 @@ export class AuthService extends GenericEndpoints<Auth>{
   redirectUrl: string
 
   constructor(public http: Http) {
-    super(http, new Auth)
+    super(http, 'auth')
   }
 
   findByUserId(id: number): Observable<Auth[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByUserId?id=' + id, this.options)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByUserId?id=' + id, this.options)
     .catch(this.handleError)  
     .map(response => response.json()._embedded.auth as Auth[])
   }
@@ -44,7 +44,7 @@ export class AuthService extends GenericEndpoints<Auth>{
   }
 
   findBySessionId(id): Observable<Auth[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findBySessionId?id=' + id, this.options)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findBySessionId?id=' + id, this.options)
     .catch(this.handleError)  
     .map(response => response.json()._embedded.auth as Auth[])
   }

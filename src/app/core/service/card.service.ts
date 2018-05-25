@@ -21,25 +21,25 @@ export class CardService extends GenericEndpoints<Card> {
   card: Card
 
   constructor(public http: Http) {
-    super(http, new Card)
+    super(http, 'card')
   }
 
   findCards(): Observable<Card[]> {
-    return this.http.get(environment.apiBaseUrl + this.model, this.options)
+    return this.http.get(environment.apiBaseUrl + this.modelName, this.options)
       .map(response => response.json()._embedded.card as Card[])
       .catch(this.handleError)
   }
 
   getCache() {
     if (!this.cardsObservable) {
-      this.cardsObservable = this.http.get(environment.apiBaseUrl + this.model, this.options)
+      this.cardsObservable = this.http.get(environment.apiBaseUrl + this.modelName, this.options)
         .map(response => (response.json()._embedded.card)).publishReplay(1).refCount()
     }
     return this.cardsObservable
   }
 
   findByIdIn(ids: number[]): Observable<Card[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByIdIn?ids=' + JSON.stringify(ids).replace('[', '').replace(']', ''))
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByIdIn?ids=' + JSON.stringify(ids).replace('[', '').replace(']', ''))
       .map(response => response.json()._embedded.card as Card[])
       .catch(this.handleError)
   }

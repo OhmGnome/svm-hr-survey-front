@@ -5,7 +5,7 @@ import { UserSessionCardService } from './service/user-session-card.service'
 export class LocalStore {
 
     static getCards(service: UserSessionCardService, cardService: CardService): Promise<{}> {
-        let promise = new Promise(function (resolve, reject) {
+        let promise = new Promise((resolve, reject) => {
             if (!service.userSession) {
                 // console.log('!service.userSession')
                 let userSession = JSON.parse(service.getLocalStorage("userSession"))

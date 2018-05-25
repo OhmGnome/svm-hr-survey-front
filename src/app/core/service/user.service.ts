@@ -18,18 +18,18 @@ export class UserService extends GenericEndpoints<User> {
   usersObservable
 
   constructor(public http: Http) {
-    super(http, new User)
+    super(http, 'user')
   }
 
   findUsers(): Observable<User[]> {
-    return this.http.get(environment.apiBaseUrl + this.model)
+    return this.http.get(environment.apiBaseUrl + this.modelName)
       .map(response => response.json()._embedded.user as User[])
       .catch(this.handleError)
   }
 
   getCache() {
     if (!this.usersObservable) {
-      this.usersObservable = this.http.get(environment.apiBaseUrl + this.model, this.options)
+      this.usersObservable = this.http.get(environment.apiBaseUrl + this.modelName, this.options)
         .map(response => (response.json()._embedded.user as User[])).publishReplay(1).refCount()
     }
     return this.usersObservable
@@ -41,25 +41,25 @@ export class UserService extends GenericEndpoints<User> {
 
 
   findByUsername(username: string): Observable<User[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByUsername?username=' + username, this.options)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByUsername?username=' + username, this.options)
       .map(response => response.json()._embedded.user as User[])
       .catch(this.handleError)
   }
 
   findByUsernameLike(username: string): Observable<User[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByUsernameLike?username=' + username)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByUsernameLike?username=' + username)
       .map(response => response.json()._embedded.user as User[])
       .catch(this.handleError)
   }
 
   findByEmail(email: string): Observable<User[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByEmail?email=' + email)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByEmail?email=' + email)
       .map(response => response.json()._embedded.user as User[])
       .catch(this.handleError)
   }
 
   findByEmailLike(email: string): Observable<User[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByEmailLike?email=' + email)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByEmailLike?email=' + email)
       .map(response => response.json()._embedded.user as User[])
       .catch(this.handleError)
   }

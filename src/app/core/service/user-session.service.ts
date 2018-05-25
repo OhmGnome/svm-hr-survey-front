@@ -12,7 +12,7 @@ export class UserSessionService extends GenericEndpoints<UserSession> {
   userSession: UserSession
 
   constructor(public http: Http) {
-    super(http, new UserSession)
+    super(http, 'userSession')
   }
 
   setUserSession(id): Observable<UserSession> {
@@ -20,19 +20,19 @@ export class UserSessionService extends GenericEndpoints<UserSession> {
   }
 
   findByUserId(id): Observable<UserSession[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByUserId?id=' + id)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByUserId?id=' + id)
       .map(response => response.json()._embedded.userSession as UserSession[])
       .catch(this.handleError)
   }
 
   findBySessionId(id): Observable<UserSession[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findBySessionId?id=' + id)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findBySessionId?id=' + id)
       .map(response => response.json()._embedded.userSession as UserSession[])
       .catch(this.handleError)
   }
 
   findByUserIdAndSessionId(userId: number, sessionId: number): Observable<UserSession[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByUserIdAndSessionId?userId=' + userId + '&sessionId=' + sessionId)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByUserIdAndSessionId?userId=' + userId + '&sessionId=' + sessionId)
       .map(response => response.json()._embedded.userSession as UserSession[])
       .catch(this.handleError)
   }

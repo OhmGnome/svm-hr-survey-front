@@ -13,11 +13,11 @@ export class SessionCardService extends GenericEndpoints<SessionCard> {
   public cards: Card[]
 
   constructor(public http: Http) {
-    super(http, new SessionCard)
+    super(http, 'sessionCard')
   }
 
   findBySessionId(id: number): Observable<SessionCard[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findBySessionId?id=' + id)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findBySessionId?id=' + id)
       .map(response => response.json()._embedded.sessionCard as SessionCard[])
       .catch(this.handleError)
   }
@@ -27,7 +27,7 @@ export class SessionCardService extends GenericEndpoints<SessionCard> {
   }
 
   findByCardId(id: number): Observable<SessionCard[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByCardId?id=' + id)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByCardId?id=' + id)
       .map(response => response.json()._embedded.sessionCard as SessionCard[])
       .catch(this.handleError)
   }

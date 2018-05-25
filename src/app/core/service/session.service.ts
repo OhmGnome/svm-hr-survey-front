@@ -19,20 +19,20 @@ export class SessionService extends GenericEndpoints<Session> {
   sessionsObservable
 
   constructor(public http: Http) {
-    super(http, new Session)
+    super(http, 'session')
     this.sessionSubject = new Subject<Session>()
     this.sessionObservable = this.sessionSubject.asObservable().publishReplay(1).refCount()
   }
 
   findSessions(): Observable<Session[]> {
-    return this.http.get(environment.apiBaseUrl + this.model)
+    return this.http.get(environment.apiBaseUrl + this.modelName)
       .map(response => response.json()._embedded.session as Session[])
       .catch(this.handleError)
   }
 
   getCache() {
     if (!this.sessionsObservable) {
-      this.sessionsObservable = this.http.get(environment.apiBaseUrl + this.model, this.options)
+      this.sessionsObservable = this.http.get(environment.apiBaseUrl + this.modelName, this.options)
         .map(response => (response.json()._embedded.session)).publishReplay(1).refCount()
     }
     return this.sessionsObservable
@@ -43,37 +43,37 @@ export class SessionService extends GenericEndpoints<Session> {
   }
 
   findByStartDateAfter(date): Observable<Session[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByStartDateAfter?date=' + date)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByStartDateAfter?date=' + date)
       .map(response => response.json()._embedded.session as Session[])
       .catch(this.handleError)
   }
 
   findByStartDateBefore(date): Observable<Session[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByStartDateBefore?date=' + date)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByStartDateBefore?date=' + date)
       .map(response => response.json()._embedded.session as Session[])
       .catch(this.handleError)
   }
 
   findByStartDateBetween(start, end): Observable<Session[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByStartDateBetween?start=' + start + '&end=' + end)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByStartDateBetween?start=' + start + '&end=' + end)
       .map(response => response.json()._embedded.session as Session[])
       .catch(this.handleError)
   }
 
   findByLocationLike(location: string): Observable<Session[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByLocationLike?id=' + location)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByLocationLike?id=' + location)
       .map(response => response.json()._embedded.session as Session[])
       .catch(this.handleError)
   }
 
   findByIsActive(isActive: boolean): Observable<Session[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByIsActive?isActive=' + isActive)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByIsActive?isActive=' + isActive)
       .map(response => response.json()._embedded.session as Session[])
       .catch(this.handleError)
   }
 
   findByLocationLikeAndIsActive(location: string, isActive: boolean): Observable<Session[]> {
-    return this.http.get(environment.apiBaseUrl + this.model + '/search/findByLocationLikeAndIsActive?location=' + location + '&isActive=' + isActive)
+    return this.http.get(environment.apiBaseUrl + this.modelName + '/search/findByLocationLikeAndIsActive?location=' + location + '&isActive=' + isActive)
       .map(response => response.json()._embedded.session as Session[])
       .catch(this.handleError)
   }

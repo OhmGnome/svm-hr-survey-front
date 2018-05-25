@@ -58,7 +58,7 @@ export class TopSumComponent implements OnInit {
   }
 
   sort(array: any[], prop1: string): void {
-    array.sort(function (a, b) {
+    array.sort((a, b) => {
       if (a[prop1] < b[prop1]) {
         return 1
       }

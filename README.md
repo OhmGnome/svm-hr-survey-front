@@ -33,4 +33,4 @@ To get more help on the `angular-cli` use `ng --help` or go check out the [Angul
 
 ## Notes
 
-I deviated from some coding standards here to create a situation that would help me better learn RxJS and implicit Spring data urls. If you are here to learn from this, do what I did in the join function of the login component in java instead, and use lists (demonstrated in ~ UserSessionCardController.java) in HTTP requests instead of looping individual objects. You can look at my most of my other projects for examples of a proper business layer.
+I deviated from some coding standards here to create a situation that would help me better learn RxJS and implicit Spring data urls. join functions of the login component belong in java instead. Use lists (demonstrated in ~ UserSessionCardController.java) in HTTP requests instead of looping individual objects. Most of my other projects have a proper business layer.
